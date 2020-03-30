@@ -1,0 +1,38 @@
+pipeline {
+
+agent any
+    
+tools {
+   git 'Default'
+  jdk 'JAVA'
+  maven 'mymaven'
+}
+stages{
+    
+    stage('SCM checkout'){
+    
+    steps{
+        git 'https://github.com/tirupathigandla/proj_sonar.git'            
+        }
+    }
+
+    stage('Compile-Package'){
+    steps{
+        echo 'Before compile'
+        sh 'mvn clean package'
+        echo 'after compile'
+    }
+    }
+    stage('Code Quality'){
+        steps{
+            sh 'mvn sonar:sonar'
+            fileExists 'pom.xml'
+        }
+    }
+    stage('Deploy'){
+        steps{
+           deploy adapters: [tomcat9(credentialsId: '4ff9677c-e488-45a9-84ae-1a2d02e47e9e', path: '', url: 'http://localhost:8081/')], contextPath: null, war: '**/*.war'
+        }
+    }
+}
+}
