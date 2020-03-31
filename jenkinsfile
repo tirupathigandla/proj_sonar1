@@ -4,7 +4,7 @@ agent any
     
 tools {
    git 'Default'
-  jdk 'JAVA'
+  jdk 'java'
   maven 'mymaven'
 }
 stages{
@@ -12,26 +12,24 @@ stages{
     stage('SCM checkout'){
     
     steps{
-        git 'https://github.com/tirupathigandla/proj_sonar.git'            
+        git 'https://github.com/tirupathigandla/proj_sonar1.git'            
         }
     }
 
     stage('Compile-Package'){
     steps{
-        echo 'Before compile'
+        echo 'maven clean'
         sh 'mvn clean package'
-        echo 'after compile'
     }
     }
     stage('Code Quality'){
         steps{
             sh 'mvn sonar:sonar'
-            fileExists 'pom.xml'
         }
     }
     stage('Deploy'){
         steps{
-           deploy adapters: [tomcat9(credentialsId: '4ff9677c-e488-45a9-84ae-1a2d02e47e9e', path: '', url: 'http://localhost:8081/')], contextPath: null, war: '**/*.war'
+          deploy adapters: [tomcat9(credentialsId: 'e12a63ac-c6d4-4951-87a0-782504dbb8b4', path: '', url: 'http://localhost:8081/')], contextPath: null, war: '**/*.war'
         }
     }
 }
